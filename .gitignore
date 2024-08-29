@@ -1,0 +1,8 @@
+.vs/
+*.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.log
+*.tmp

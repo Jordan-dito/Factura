@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "lpS8YpozX+FXLDJktcwONTxEimcbaJawCOPv3lu9csY=",
+  "Source": "Api_Factura",
+  "BasePath": "_content/Api_Factura",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

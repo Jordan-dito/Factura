@@ -1,0 +1,108 @@
+﻿@model IEnumerable<Cliente_Servicio.Models.ClienteViewModel>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<!-- Enlace a los estilos de Bootstrap y DataTables -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.4/datatables.min.css">
+
+<div class="container mt-4">
+    <h1 class="mb-4">Clientes</h1>
+
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addClienteModal">
+        Agregar Cliente
+    </button>
+
+    <!-- Tabla de Clientes -->
+    <table id="clienteTable" class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Identificación</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cliente in Model)
+            {
+                <tr>
+                    <td>@cliente.IdCliente</td>
+                    <td>@cliente.Nombre</td>
+                    <td>@cliente.Identificacion</td>
+                    <td>@cliente.Direccion</td>
+                    <td>@cliente.Telefono</td>
+                    <td>@cliente.Correo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para agregar cliente -->
+<div class="modal fade" id="addClienteModal" tabindex="-1" role="dialog" aria-labelledby="addClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClienteModalLabel">Agregar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addClienteForm" method="post" action="https://localhost:7091/api/clientes/crearCliente">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="identificacion">Identificación</label>
+                        <input type="text" class="form-control" id="identificacion" name="identificacion" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="correo">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Scripts de jQuery, Bootstrap y DataTables -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.4/datatables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#clienteTable').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json" // Traducción al español
+                },
+                "paging": true,       // Habilita la paginación
+                "searching": true,    // Habilita la búsqueda
+                "ordering": true,     // Habilita la ordenación de columnas
+                "lengthMenu": [5, 10, 25, 50], // Opciones para la cantidad de registros por página
+                "pageLength": 5,     // Número inicial de registros por página
+                "responsive": true    // Habilita la responsividad para dispositivos móviles
+            });
+        });
+    </script>
+}

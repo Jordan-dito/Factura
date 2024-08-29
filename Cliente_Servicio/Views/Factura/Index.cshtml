@@ -1,0 +1,143 @@
+﻿@model IEnumerable<FacturaViewModel>
+
+@{
+    ViewData["Title"] = "Facturas";
+}
+
+<!-- Enlace a los estilos de Bootstrap y DataTables -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.4/datatables.min.css">
+
+<div class="container mt-4">
+    <h1 class="mb-4">Facturas</h1>
+
+    <!-- Botón para ir a la vista de clientes -->
+    <a href="/Cliente/Index" class="btn btn-secondary mb-3">Ver Clientes</a>
+
+    <!-- Botón para abrir el modal de agregar factura -->
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addFacturaModal">
+        Agregar Factura
+    </button>
+
+    <!-- Tabla de Facturas -->
+    <table id="facturaTable" class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Establecimiento</th>
+                <th>Punto de Emisión</th>
+                <th>Número de Factura</th>
+                <th>Fecha</th>
+              
+              
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var factura in Model)
+            {
+                <tr>
+                    <td>@factura.IdFactura</td>
+                    <td>@factura.Establecimiento</td>
+                    <td>@factura.PuntoEmision</td>
+                    <td>@factura.NumeroFactura</td>
+                    <td>@factura.Fecha.ToString("yyyy-MM-dd")</td>
+                 
+                 
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para agregar factura -->
+<div class="modal fade" id="addFacturaModal" tabindex="-1" role="dialog" aria-labelledby="addFacturaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFacturaModalLabel">Agregar Factura</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addFacturaForm" method="post" action="https://localhost:7091/api/factura/crearFactura">
+                    <div class="form-group">
+                        <label for="establecimiento">Establecimiento</label>
+                        <input type="text" class="form-control" id="establecimiento" name="establecimiento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="puntoEmision">Punto de Emisión</label>
+                        <input type="text" class="form-control" id="puntoEmision" name="puntoEmision" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="numeroFactura">Número de Factura</label>
+                        <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="form-group">
+                        <label for="idCliente">Cliente</label>
+                        <input type="text" id="searchClient" class="form-control mb-2" placeholder="Buscar Cliente por Nombre">
+                        <select class="form-control" id="idCliente" name="idCliente" required>
+                            <!-- Opciones se llenarán dinámicamente -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Scripts de jQuery, Bootstrap y DataTables -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.4/datatables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#facturaTable').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json" // Traducción al español
+                },
+                "paging": true,       // Habilita la paginación
+                "searching": true,    // Habilita la búsqueda
+                "ordering": true,     // Habilita la ordenación de columnas
+                "lengthMenu": [5, 10, 25, 50], // Opciones para la cantidad de registros por página
+                "pageLength": 5,     // Número inicial de registros por página
+                "responsive": true    // Habilita la responsividad para dispositivos móviles
+            });
+
+            // Llenar el dropdown de clientes cuando se abre el modal
+            $('#addFacturaModal').on('show.bs.modal', function (e) {
+                var $select = $('#idCliente');
+                var $searchClient = $('#searchClient');
+                $select.empty(); // Limpiar el dropdown
+
+                // Hacer una llamada AJAX para obtener los clientes y llenar el dropdown
+                $.get('https://localhost:7091/api/factura/clientes', function (clientes) {
+                    clientes.forEach(function (cliente) {
+                        $select.append(new Option(cliente.nombre, cliente.idCliente));
+                    });
+                });
+
+                // Agregar filtro para el dropdown
+                $searchClient.on('input', function () {
+                    var searchTerm = $(this).val().toLowerCase();
+                    $select.empty(); // Limpiar el dropdown
+
+                    // Filtrar opciones y volver a llenar el dropdown
+                    clientes.filter(function (cliente) {
+                        return cliente.nombre.toLowerCase().includes(searchTerm);
+                    }).forEach(function (cliente) {
+                        $select.append(new Option(cliente.nombre, cliente.idCliente));
+                    });
+                });
+            });
+        });
+    </script>
+}
